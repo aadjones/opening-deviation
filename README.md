@@ -37,17 +37,16 @@ Streamlit expects a hidden directory named `.streamlit` at the top level of your
 mkdir -p .streamlit
 ```
 
-Inside the `.streamlit` directory, create a file named `secrets.toml` and add your LICHESS API token:
+Inside the `.streamlit` directory, create a file named `secrets.toml` and add your Lichess API token:
 
 ```bash
 cd .streamlit && touch secrets.toml 
 ```
 
+Add this line to your toml file, replacing `"your_api_token"` with your actual API token.
 ```toml
 LICHESS_API_TOKEN = "your_api_token"
 ```
-
-Be sure to replace `"your_api_token"` with your actual API token.
 
 ## 4. Run the Streamlit App
 
