@@ -47,11 +47,11 @@ cd .streamlit && touch secrets.toml
 LICHESS_API_TOKEN = "your_api_token"
 ```
 
-Ensure to replace `"your_api_token"` with your actual API token.
+Be sure to replace `"your_api_token"` with your actual API token.
 
 ## 4. Run the Streamlit App
 
-With all requirements set up, run the Streamlit app using the following command:
+With all requirements set up, run the Streamlit app from the top directory using the following command:
 
 ```bash
 streamlit run opening-deviation.py
