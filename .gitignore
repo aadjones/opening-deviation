@@ -1,4 +1,4 @@
-.secrets/
+.streamlit/
 .DS_Store
 *.pyc
 myenv/
