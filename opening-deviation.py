@@ -216,9 +216,6 @@ with st.form(key='my_form'):
 
 # Handling form submission
 if submit_button:
-    # Here you can add the code to handle the username and study URL
-    # For example, you can call functions that fetch the user's games and the study data
-    # and then process and display the results.
     chapter = int(study_chapter)
     ref_pgn_str = get_pgn_from_study(study_url, chapter)
     # write_pgn(ref_pgn_str, pgn_path + "study-test.pgn") # useful for debugging
