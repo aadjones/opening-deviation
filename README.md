@@ -39,6 +39,10 @@ mkdir -p .streamlit
 
 Inside the `.streamlit` directory, create a file named `secrets.toml` and add your LICHESS API token:
 
+```bash
+cd .streamlit && touch secrets.toml 
+```
+
 ```toml
 LICHESS_API_TOKEN = "your_api_token"
 ```
