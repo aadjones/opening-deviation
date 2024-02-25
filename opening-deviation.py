@@ -229,7 +229,7 @@ if submit_button:
     periods = "." if color == "White" else "..."
     move_notation = f"{i}{periods}{move}"
     ref_move_notation = f"{i}{periods}{ref_move}"
-    st.write(f"First game move that deviated from reference: {move_notation}")
+    st.write(f"First game move from your last game played that deviated from reference study: {move_notation}")
     st.write(f"Reference move: {ref_move_notation}")
 
     
