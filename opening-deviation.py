@@ -6,8 +6,6 @@ import chess.pgn
 import chess
 import os
 import io
-import time
-from bs4 import BeautifulSoup
 from typing import Optional, Tuple, IO
 
 ################################################################################
