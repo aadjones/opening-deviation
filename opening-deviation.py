@@ -219,16 +219,26 @@ def handle_form_submission(username: str, study_url: str, chapter_number: str) -
     # Find deviation between games
     deviation_info = find_deviation(reference_game, test_game)
 
-    # Display the deviation information
+    display_deviation_info(deviation_info)
+   
+
+def display_deviation_info(deviation_info: Optional[Tuple[int, str, str, str]]) -> None:
+    """
+    Displays the deviation information.
+
+    :param deviation_info: tuple or None, information about the deviation
+    :return: None
+    """
     if deviation_info:
         i, move, ref_move, color = deviation_info
-        periods = "." if color == "White" else "..."
+        periods = "." if color == "White" else "..." # For example, move 2 will be 2. if White or 2... if Black
         move_notation = f"{i}{periods}{move}"
         ref_move_notation = f"{i}{periods}{ref_move}"
         st.write(f"First game move from your last game played that deviated from reference study: {move_notation}")
         st.write(f"Reference move: {ref_move_notation}")
     else:
         st.write("No deviation found in the last game played.")
+
 ################################################################################
 # End of function definitions
 ################################################################################
