@@ -4,3 +4,4 @@
 myenv/
 *.egg-info
 __pycache__
+.vscode/
