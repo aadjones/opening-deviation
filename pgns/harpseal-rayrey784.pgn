@@ -1,0 +1,22 @@
+[Event "Rated Blitz game"]
+[Site "https://lichess.org/Ma56XO4C"]
+[Date "2024.02.14"]
+[White "HarpSeal"]
+[Black "rayrey784"]
+[Result "1-0"]
+[UTCDate "2024.02.14"]
+[UTCTime "22:57:31"]
+[WhiteElo "2202"]
+[BlackElo "2225"]
+[WhiteRatingDiff "+8"]
+[BlackRatingDiff "-6"]
+[WhiteTitle "NM"]
+[Variant "Standard"]
+[TimeControl "300+0"]
+[ECO "D37"]
+[Opening "Queen's Gambit Declined: Three Knights Variation"]
+[Termination "Normal"]
+
+1. d4 Nf6 2. c4 e6 3. Nf3 d5 4. Nc3 Be7 5. cxd5 exd5 6. Qc2 c6 7. Bf4 O-O 8. e3 Nbd7 9. h3 Re8 10. Bd3 h6 11. O-O Bf8 12. Rab1 a5 13. Rbc1 Qe7 14. Ne5 Nxe5 15. Bxe5 Nd7 16. Bg3 g6 17. a3 Bg7 18. Rb1 f5 19. b4 axb4 20. axb4 b5 21. Ne2 Bb7 22. Rfc1 Nb6 23. Nf4 Qf7 24. h4 Nc4 25. Ra1 Rf8 26. h5 g5 27. Ng6 f4 28. exf4 gxf4 29. Bxf4 Rxa1 30. Rxa1 Bxd4 31. Rf1 Re8 32. Bxh6 Ne5 33. Nxe5 Rxe5 34. Bg6 Qe7 35. Bf4 Re2 36. Qf5 Qf6 37. Qg4 Re7 38. h6 Kh8 39. Bg5 Qe6 40. Qxd4+ Qe5 41. Bf6+ Qxf6 42. Qxf6+ 1-0
+
+
