@@ -12,7 +12,7 @@ from typing import Optional, Tuple, IO
 # Global variables
 ################################################################################
 
-PGN_PATH = "pgns/" # useful for debugging to read/write pgn files
+PGN_PATH = 'pgns/' # useful for debugging to read/write pgn files
 
 # api_token = st.secrets["LICHESS_API_TOKEN"] # api token may be necessary later
 
