@@ -12,8 +12,9 @@ from typing import Optional, Tuple, IO
 # Global variables
 ################################################################################
 
-pgn_path = "pgns/"
-# api_token = st.secrets["LICHESS_API_TOKEN"] # api token is not necessary yet
+PGN_PATH = "pgns/" # useful for debugging to read/write pgn files
+
+# api_token = st.secrets["LICHESS_API_TOKEN"] # api token may be necessary later
 
 ################################################################################
 # End of global variables
@@ -42,12 +43,12 @@ def get_last_games_pgn(username: str, max_games: int = 1, retries: int = 3,
     session.mount('https://', adapter)
 
     try:
-        response = session.get(f"https://lichess.org/api/games/user/{username}",
+        response = session.get(f'https://lichess.org/api/games/user/{username}',
                                params={'max': max_games}, timeout=timeout)
         response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
         return response.text
     except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
+        print(f'An error occurred: {e}')
         return None
 
 
@@ -65,14 +66,14 @@ def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game)
 
     # Iterate through moves of both games simultaneously
     for move_number, (rep_move, recent_move) in enumerate(zip(repertoire_game.mainline_moves(), recent_game.mainline_moves()), start=1):
-        player_color = "White" if recent_board.turn else "Black"
+        player_color = 'White' if recent_board.turn else 'Black'
         # Whole move count for display; move_number will be measured in ply (half-moves)
         whole_move_number = (move_number + 1) // 2
 
         # Compare moves before pushing them to the board
         if rep_move != recent_move:
             # Since the move has not been made yet, the board is in the correct state to check for legality and generate SAN
-            assert recent_move in recent_board.legal_moves, f"Illegal move: {recent_move} at position {recent_board.fen()}"
+            assert recent_move in recent_board.legal_moves, f'Illegal move: {recent_move} at position {recent_board.fen()}'
             deviation_san = recent_board.san(recent_move)
             reference_san = repertoire_board.san(rep_move)
 
@@ -110,11 +111,11 @@ def write_pgn(pgn_data: str, filename: str) -> None:
     full_path = os.path.join(os.getcwd(), filename) 
 
     # Open the file in write mode (wb for binary) and write the PGN data
-    with open(full_path, "wb") as f:
+    with open(full_path, 'wb') as f:
         f.write(pgn_data.encode())  # Convert string to bytes
 
     #Print confirmation message
-    print(f"PGN data successfully saved to: {full_path}")
+    print(f'PGN data successfully saved to: {full_path}')
 
 def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
     """
@@ -136,19 +137,21 @@ def get_pgn_from_study(study_url: str, chapter_number: int) -> str:
     """
     # Construct the URL for fetching study details
     study_id = extract_study_id_from_url(study_url)
-    url = f"https://lichess.org/api/study/{study_id}.pgn"
+    url = f'https://lichess.org/api/study/{study_id}.pgn'
+
+    # Unclear if we need all these parameters inside params below; could just be a ChatGPT thing
     params = {
-        "clocks": "false",
-        "comments": "true",
-        "variations": "true",
-        "source": "false",
-        "orientation": "false"
+        'clocks': 'false',
+        'comments': 'true',
+        'variations': 'true',
+        'source': 'false',
+        'orientation': 'false'
     }
 
     # Fetch study details from the Lichess API
     response = requests.get(url, params=params)
     if response.status_code != 200:
-        return f"Failed to fetch study. Status code: {response.status_code}"
+        return f'Failed to fetch study. Status code: {response.status_code}'
 
     # Extract the PGN data for the entire study
     full_pgn_data = response.text
@@ -164,13 +167,12 @@ def extract_study_id_from_url(url: str) -> str:
     :param url: str, the URL of the Lichess study
     :return: str, the study ID extracted from the URL
     """
-    # Split the URL by '/'
     parts = url.split('/')
     # The study ID is the third part of the URL
     # For example, after the split, the parts variable will contain
-    # ["https:", "", "lichess.org", "study", "RKEBYTWL", "muR4Kgyc"]
-    # and we want to grab "RKEBYTWL", which is at index 4
-    study_id = parts[4]  # Adjust the index based on the URL format
+    # ['https:', '', 'lichess.org', 'study', 'RKEBYTWL', 'muR4Kgyc']
+    # and we want to grab 'RKEBYTWL', which is at index 4
+    study_id = parts[4]  
     return study_id
 
 def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
@@ -183,14 +185,15 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
     """
     chapters = full_pgn.strip().split('\n\n\n')
     if chapter_number > len(chapters) or chapter_number < 1:
-        return f"Chapter {chapter_number} not found in the study."
+        return f'Chapter {chapter_number} not found in the study.'
 
     # Chapters are 1-indexed, but lists are 0-indexed
     chapter_pgn = chapters[chapter_number - 1].strip()
     
     # Check if the chapter PGN starts with a PGN tag; if not, it might not be a valid PGN
+    # This part of the code might be too brittle; do all PGN files start with '[Event'?
     if not chapter_pgn.startswith('[Event'):
-        return f"Chapter {chapter_number} PGN not found or not valid."
+        return f'Chapter {chapter_number} PGN not found or not valid.'
     
     return chapter_pgn
 
@@ -231,13 +234,13 @@ def display_deviation_info(deviation_info: Optional[Tuple[int, str, str, str]]) 
     """
     if deviation_info:
         i, move, ref_move, color = deviation_info
-        periods = "." if color == "White" else "..." # For example, move 2 will be 2. if White or 2... if Black
-        move_notation = f"{i}{periods}{move}"
-        ref_move_notation = f"{i}{periods}{ref_move}"
-        st.write(f"First game move from your last game played that deviated from reference study: {move_notation}")
-        st.write(f"Reference move: {ref_move_notation}")
+        periods = '.' if color == 'White' else '...' # For example, move 2 will be 2. if White or 2... if Black
+        move_notation = f'{i}{periods}{move}'
+        ref_move_notation = f'{i}{periods}{ref_move}'
+        st.write(f'First game move from your last game played that deviated from reference study: {move_notation}')
+        st.write(f'Reference move: {ref_move_notation}')
     else:
-        st.write("No deviation found in the last game played.")
+        st.write('No deviation found in the last game played.')
 
 ################################################################################
 # End of function definitions
@@ -247,17 +250,18 @@ def display_deviation_info(deviation_info: Optional[Tuple[int, str, str, str]]) 
 # Driver code
 ################################################################################
 
-# Title of the web app
-st.title('Chess Opening Repertoire Practice')
+if __name__ == '__main__':
+    # Title of the web app
+    st.title('Chess Opening Repertoire Practice')
 
-# Input form
-with st.form(key='my_form'):
-    username = st.text_input(label='Enter your Lichess username')
-    study_url = st.text_input(label='Enter the URL of your Lichess public study')
-    study_chapter = st.text_input(label='Enter the Chapter number of your Lichess study')
-    submit_button = st.form_submit_button(label='Submit')
+    # Input form
+    with st.form(key='opening_form'):
+        username = st.text_input(label='Enter your Lichess username')
+        study_url = st.text_input(label='Enter the URL of your Lichess public study')
+        study_chapter = st.text_input(label='Enter the Chapter number of your Lichess study')
+        submit_button = st.form_submit_button(label='Submit')
 
-# Handling form submission
-if submit_button:
-    handle_form_submission(username, study_url, study_chapter)
-    
+    # Handling form submission
+    if submit_button:
+        handle_form_submission(username, study_url, study_chapter)
+        
