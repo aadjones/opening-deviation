@@ -194,6 +194,41 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
     
     return chapter_pgn
 
+def handle_form_submission(username: str, study_url: str, chapter_number: str) -> None:
+    """
+    Handles form submission and displays the result.
+
+    :param username: str, the Lichess username
+    :param study_url: str, the URL of the Lichess study
+    :param chapter_number: str, the chapter number of the Lichess study
+    :return: None
+    """
+    chapter = int(chapter_number)
+
+    # Get the PGN data from the Lichess study
+    ref_pgn_str = get_pgn_from_study(study_url, chapter)
+
+    # Fetch the last game played by the user
+    max_games = 1
+    test_game_str = get_last_games_pgn(username, max_games)
+
+    # Convert PGN strings to game objects
+    test_game = pgn_string_to_game(test_game_str)
+    reference_game = pgn_string_to_game(ref_pgn_str)
+
+    # Find deviation between games
+    deviation_info = find_deviation(reference_game, test_game)
+
+    # Display the deviation information
+    if deviation_info:
+        i, move, ref_move, color = deviation_info
+        periods = "." if color == "White" else "..."
+        move_notation = f"{i}{periods}{move}"
+        ref_move_notation = f"{i}{periods}{ref_move}"
+        st.write(f"First game move from your last game played that deviated from reference study: {move_notation}")
+        st.write(f"Reference move: {ref_move_notation}")
+    else:
+        st.write("No deviation found in the last game played.")
 ################################################################################
 # End of function definitions
 ################################################################################
@@ -214,20 +249,5 @@ with st.form(key='my_form'):
 
 # Handling form submission
 if submit_button:
-    chapter = int(study_chapter)
-    ref_pgn_str = get_pgn_from_study(study_url, chapter)
-    # write_pgn(ref_pgn_str, pgn_path + "study-test.pgn") # useful for debugging
-
-    max_games = 1
-    test_game_str = get_last_games_pgn(username, max_games) 
-    # write_pgn(test_game_str, f"{username}-last-game.pgn") # useful for debugging
-    test_game = pgn_string_to_game(test_game_str) # convert to Game type
-    reference_game = pgn_string_to_game(ref_pgn_str)
-    i, move, ref_move, color = find_deviation(reference_game, test_game)
-    periods = "." if color == "White" else "..."
-    move_notation = f"{i}{periods}{move}"
-    ref_move_notation = f"{i}{periods}{ref_move}"
-    st.write(f"First game move from your last game played that deviated from reference study: {move_notation}")
-    st.write(f"Reference move: {ref_move_notation}")
-
+    handle_form_submission(username, study_url, study_chapter)
     
