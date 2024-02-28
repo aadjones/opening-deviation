@@ -55,3 +55,17 @@ With all requirements set up, run the Streamlit app from the top directory using
 ```bash
 streamlit run opening-deviation.py
 ```
+
+## 5. Running Tests
+
+Ensure `pytest` is installed:
+
+```bash
+pip install pytest
+```
+
+Run tests with:
+
+```bash
+pytest
+```
