@@ -1,0 +1,13 @@
+[Event "Sicilian: Accelerated Dragon 8... Re8"]
+[Site "https://lichess.org/study/bve0Qw48/d7UM1Uru"]
+[Result "*"]
+[Variant "Standard"]
+[ECO "B35"]
+[Opening "Sicilian Defense: Accelerated Dragon, Modern Bc4 Variation"]
+[Annotator "https://lichess.org/@/Jrjrjr4"]
+[UTCDate "2022.02.07"]
+[UTCTime "21:38:04"]
+
+1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 g6 5. Nc3 Bg7 6. Be3 Nf6 7. Bc4 O-O 8. Bb3 Re8 9. O-O (9. f3 e6 10. Qd2 d5 11. exd5 Nxd5 12. Nxd5 Nxd4 13. Bxd4 (13. Nc3 Nxb3 14. Qxd8 Rxd8 15. axb3 Bd7 16. Rxa7 Rxa7 17. Bxa7 Ra8 18. Bg1 Bxc3+ 19. bxc3 Ra1+ 20. Kf2) 13... exd5+ 14. Kf1 (14. Kf2 Qh4+ { [%cal Gh4d4] }) (14. Kd1 Bxd4 15. Qxd4 Bf5 16. g4 Qh4 17. Kd2 { [%cal Ga1e1] } 17... Qh6+ 18. f4 Re4 { [%cal Gh6f4,Gf5c2] }) 14... b6 15. Bxg7 Ba6+ 16. Kf2 (16. Kg1 Kxg7) 16... Re2+) 9... d6 10. f3 (10. h3 Na5 11. f4 b6 12. e5 dxe5 13. fxe5 Nxb3 14. exf6 Nxd4 15. fxg7 Nf5) 10... Na5 11. Qd2 a6 12. Rad1 b5 *
+
+
