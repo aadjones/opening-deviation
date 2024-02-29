@@ -64,6 +64,12 @@ Ensure `pytest` is installed:
 pip install pytest
 ```
 
+Install the Project in Editable Mode:
+
+```bash
+pip install -e .
+```
+
 From the root project directory, run tests with:
 
 ```bash
