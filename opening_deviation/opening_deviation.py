@@ -6,13 +6,14 @@ import chess.pgn
 import chess
 import os
 import io
+import re
 from typing import Optional, Tuple, IO
 
 ################################################################################
 # Global variables
 ################################################################################
 
-PGN_PATH = 'pgns/' # useful for debugging to read/write pgn files
+# PGN_PATH = 'pgns/' # useful for debugging to read/write pgn files
 
 # api_token = st.secrets["LICHESS_API_TOKEN"] # api token may be necessary later
 
@@ -165,15 +166,19 @@ def extract_study_id_from_url(url: str) -> str:
     Extracts the study ID from a Lichess study URL.
 
     :param url: str, the URL of the Lichess study
-    :return: str, the study ID extracted from the URL
+    :return: str, the study ID extracted from the URL, or an empty string if not found
     """
-    parts = url.split('/')
-    # The study ID is the third part of the URL
-    # For example, after the split, the parts variable will contain
-    # ['https:', '', 'lichess.org', 'study', 'RKEBYTWL', 'muR4Kgyc']
-    # and we want to grab 'RKEBYTWL', which is at index 4
-    study_id = parts[4]  
-    return study_id
+    # Use a regex pattern to match the study ID in the URL
+    pattern = re.compile(r"lichess\.org/study/([a-zA-Z0-9]+)")
+    match = pattern.search(url)
+
+    if match:
+        # The study ID is captured in the first group of the match
+        return match.group(1)
+    else:
+        # Return an empty string or a specific message if the URL doesn't match the expected format
+        return "Study ID not found"
+
 
 def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
     """
