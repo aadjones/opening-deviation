@@ -1,4 +1,5 @@
 from modules.lichess_api import extract_study_id_from_url
+from modules.deviation_result import DeviationResult
 
 def test_extract_study_id_from_url_base():
     url = 'https://lichess.org/study/RKEBYTWL'

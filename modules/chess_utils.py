@@ -2,14 +2,15 @@ import chess.pgn
 import io
 import os
 from typing import Optional, Tuple
+from .deviation_result import DeviationResult
 
-def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game) -> Optional[Tuple[int, str, str, str]]:
+def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game) -> Optional[DeviationResult]:
     """
     Compares the moves of a recent game against a repertoire game and finds the first move that deviates.
 
     :param repertoire_game: chess.pgn.Game, the opening repertoire game
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
-    :return: tuple, (whole move number, deviation move in SAN format, reference move in SAN format, player color str), or None if there's no deviation
+    :return: DeviationResult, or None if there's no deviation
     """
     # Initialize a board for each game to track the position
     repertoire_board = repertoire_game.board()
@@ -29,7 +30,7 @@ def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game)
             reference_san = repertoire_board.san(rep_move)
 
             # Now, return the whole move number and the SAN notation of the deviating move from the recent game
-            return whole_move_number, deviation_san, reference_san, player_color
+            return DeviationResult(whole_move_number, deviation_san, reference_san, player_color)
 
         # If the moves are the same, then push them to their respective boards
         recent_board.push(recent_move)
