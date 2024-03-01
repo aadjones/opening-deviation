@@ -1,4 +1,6 @@
-"""This module provides utility functions for chess analysis."""
+"""
+This module provides utility functions for chess analysis.
+"""
 
 import io
 import os

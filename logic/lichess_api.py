@@ -1,8 +1,13 @@
+"""
+This module handles requests to the Lichess API to get the last games from a username
+and get study data from a Lichess study.
+"""
+from typing import Optional
+import re
 import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
-import re
-from typing import Optional
+from urllib3.util.retry import Retry
+
 
 def get_last_games_pgn(username: str, max_games: int = 1, retries: int = 3,
                        backoff_factor: float = 1.5, timeout: int = 10) -> Optional[str]:
@@ -14,7 +19,7 @@ def get_last_games_pgn(username: str, max_games: int = 1, retries: int = 3,
     :param retries: int, the number of retries in case of failures (default is 3)
     :param backoff_factor: float, the backoff factor for retrying requests (default is 1.5)
     :param timeout: int, the timeout for each HTTP request in seconds (default is 10)
-    :return: Optional[str], the PGN content of the last game(s) played by the user, or None if failed
+    :return: Optional[str], the PGN of the last game(s) played by the user, or None if failed
     """
     session = requests.Session()
     retry = Retry(total=retries, read=retries, connect=retries, backoff_factor=backoff_factor,
@@ -25,12 +30,13 @@ def get_last_games_pgn(username: str, max_games: int = 1, retries: int = 3,
     try:
         response = session.get(f'https://lichess.org/api/games/user/{username}',
                                params={'max': max_games}, timeout=timeout)
-        response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
+        response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException as e:
         print(f'An error occurred: {e}')
         return None
-    
+
 def get_pgn_from_study(study_url: str, chapter_number: int) -> str:
     """
     Extracts the PGN from a specified chapter of a Lichess study using the Lichess API.
@@ -53,15 +59,15 @@ def get_pgn_from_study(study_url: str, chapter_number: int) -> str:
     }
 
     # Fetch study details from the Lichess API
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=10)
     if response.status_code != 200:
         return f'Failed to fetch study. Status code: {response.status_code}'
 
     # Extract the PGN data for the entire study
     full_pgn_data = response.text
-    
+
     # Extract the PGN data for the specified chapter
-    chapter_pgn = extract_chapter_pgn(full_pgn_data, chapter_number)  
+    chapter_pgn = extract_chapter_pgn(full_pgn_data, chapter_number)
     return chapter_pgn
 
 def extract_study_id_from_url(url: str) -> str:
@@ -78,10 +84,10 @@ def extract_study_id_from_url(url: str) -> str:
     if match:
         # The study ID is captured in the first group of the match
         return match.group(1)
-    else:
-        # Return an empty string or a specific message if the URL doesn't match the expected format
-        return "Study ID not found"
-    
+
+    # Return an empty string or a specific message if the URL doesn't match the expected format
+    return "Study ID not found"
+
 def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
     """
     Extracts the PGN for a specific chapter from the full PGN data.
@@ -96,10 +102,10 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
 
     # Chapters are 1-indexed, but lists are 0-indexed
     chapter_pgn = chapters[chapter_number - 1].strip()
-    
+
     # Check if the chapter PGN starts with a PGN tag; if not, it might not be a valid PGN
     # This part of the code might be too brittle; do all PGN files start with '[Event'?
     if not chapter_pgn.startswith('[Event'):
         return f'Chapter {chapter_number} PGN not found or not valid.'
-    
+
     return chapter_pgn

@@ -1,5 +1,9 @@
+"""
+This module provides the logic for the user input/output on the website through streamlit.
+"""
+
+from typing import Optional
 import streamlit as st
-from typing import Optional, Tuple
 from .lichess_api import get_pgn_from_study, get_last_games_pgn
 from .chess_utils import pgn_string_to_game, find_deviation
 from .deviation_result import DeviationResult
@@ -31,7 +35,7 @@ def handle_form_submission(username: str, study_url: str, chapter_number: str) -
     deviation_info = find_deviation(reference_game, test_game)
 
     display_deviation_info(deviation_info)
-   
+
 
 def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
     """
@@ -45,10 +49,11 @@ def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
         dev_move = deviation_info.deviation_san
         ref_move = deviation_info.reference_san
         color = deviation_info.player_color
-        periods = '.' if color == 'White' else '...' # For example, move 2 will be 2. if White or 2... if Black
+        # For example, move 2 will be 2. if White or 2... if Black
+        periods = '.' if color == 'White' else '...'
         dev_move_notation = f'{i}{periods}{dev_move}'
         ref_move_notation = f'{i}{periods}{ref_move}'
-        st.write(f'First game move from your last game played that deviated from reference study: {dev_move_notation}')
+        st.write(f'Deviating move: {dev_move_notation}')
         st.write(f'Reference move: {ref_move_notation}')
     else:
         st.write('No deviation found in the last game played.')
