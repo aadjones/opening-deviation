@@ -1,12 +1,17 @@
-import chess.pgn
+"""This module provides utility functions for chess analysis."""
+
 import io
 import os
-from typing import Optional, Tuple
+from typing import Optional
+import chess.pgn
 from .deviation_result import DeviationResult
 
-def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game) -> Optional[DeviationResult]:
+
+def find_deviation(
+        repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game) -> Optional[DeviationResult]:
     """
-    Compares the moves of a recent game against a repertoire game and finds the first move that deviates.
+    Compares the moves of a recent game against a repertoire game 
+    and finds the first move that deviates.
 
     :param repertoire_game: chess.pgn.Game, the opening repertoire game
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
@@ -15,21 +20,27 @@ def find_deviation(repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game)
     # Initialize a board for each game to track the position
     repertoire_board = repertoire_game.board()
     recent_board = recent_game.board()
+    repertoire_moves = repertoire_game.mainline_moves()
+    my_game_moves = recent_game.mainline_moves()
 
     # Iterate through moves of both games simultaneously
-    for move_number, (rep_move, recent_move) in enumerate(zip(repertoire_game.mainline_moves(), recent_game.mainline_moves()), start=1):
+    moves_list = enumerate(zip(repertoire_moves, my_game_moves), start=1)
+    for move_number, (rep_move, recent_move) in moves_list:
         player_color = 'White' if recent_board.turn else 'Black'
         # Whole move count for display; move_number will be measured in ply (half-moves)
         whole_move_number = (move_number + 1) // 2
 
         # Compare moves before pushing them to the board
         if rep_move != recent_move:
-            # Since the move has not been made yet, the board is in the correct state to check for legality and generate SAN
-            assert recent_move in recent_board.legal_moves, f'Illegal move: {recent_move} at position {recent_board.fen()}'
+            # Since the move has not been made yet,
+            # the board is in the correct state to check for legality and generate SAN
+            illegal_msg = f'Illegal move: {recent_move} at position {recent_board.fen()}'
+            assert recent_move in recent_board.legal_moves, illegal_msg
             deviation_san = recent_board.san(recent_move)
             reference_san = repertoire_board.san(rep_move)
 
-            # Now, return the whole move number and the SAN notation of the deviating move from the recent game
+            # Now, return the whole move number
+            # and the SAN notation of the deviating move from the recent game
             return DeviationResult(whole_move_number, deviation_san, reference_san, player_color)
 
         # If the moves are the same, then push them to their respective boards
@@ -60,7 +71,7 @@ def write_pgn(pgn_data: str, filename: str) -> None:
     :param filename: str, the name of the file to write the PGN data to
     :return: None
     """
-    full_path = os.path.join(os.getcwd(), filename) 
+    full_path = os.path.join(os.getcwd(), filename)
 
     # Open the file in write mode (wb for binary) and write the PGN data
     with open(full_path, 'wb') as f:
