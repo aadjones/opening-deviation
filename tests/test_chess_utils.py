@@ -1,5 +1,4 @@
-from opening_deviation.opening_deviation import find_deviation, read_pgn, pgn_string_to_game
-from opening_deviation.opening_deviation import extract_study_id_from_url
+from modules.chess_utils import find_deviation, read_pgn, pgn_string_to_game
 
 PGN_PATH = 'pgns/'
 
@@ -19,11 +18,3 @@ def test_find_deviation_when_equal():
     ref_game = read_pgn(PGN_PATH + 'carlsen-nakamura-2018.pgn')
 
     assert(find_deviation(ref_game, ref_game) == None)
-
-def test_extract_study_id_from_url_base():
-    url = 'https://lichess.org/study/RKEBYTWL'
-    assert(extract_study_id_from_url(url) == 'RKEBYTWL')
-
-def test_extract_study_id_from_url_using_chapter():
-    url = 'https://lichess.org/study/RKEBYTWL/muR4Kgyc'
-    assert(extract_study_id_from_url(url) == 'RKEBYTWL')

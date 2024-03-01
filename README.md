@@ -53,7 +53,7 @@ LICHESS_API_TOKEN = "your_api_token"
 With all requirements set up, run the Streamlit app from the top directory using the following command:
 
 ```bash
-streamlit run opening_deviation/opening_deviation.py
+streamlit run main.py
 ```
 
 ## 5. Running Tests
