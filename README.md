@@ -56,7 +56,7 @@ With all requirements set up, run the Streamlit app from the top directory using
 streamlit run main.py
 ```
 
-## 5. Running Tests
+## Running Tests
 
 Ensure `pytest` is installed:
 
@@ -75,3 +75,23 @@ From the root project directory, run tests with:
 ```bash
 pytest
 ```
+
+## Building the Documentation
+
+### Prerequisites
+
+- Ensure you have Python 3.6 or newer installed.
+- Install Sphinx: `pip install sphinx`
+
+### Building
+
+To build the documentation, run the following command in the project root:
+
+```bash
+sphinx-build -b html docs/source docs/build
+```
+
+This will generate HTML documentation in the docs/build directory.
+
+### Viewing
+Open docs/build/index.html in your web browser to view the documentation.
