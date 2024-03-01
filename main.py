@@ -1,7 +1,7 @@
 import streamlit as st
-from modules.lichess_api import get_last_games_pgn, get_pgn_from_study
-from modules.chess_utils import find_deviation, pgn_string_to_game, write_pgn, read_pgn
-from modules.form_handlers import handle_form_submission, display_deviation_info
+from logic.lichess_api import get_last_games_pgn, get_pgn_from_study
+from logic.chess_utils import find_deviation, pgn_string_to_game, write_pgn, read_pgn
+from logic.form_handlers import handle_form_submission, display_deviation_info
 
 ################################################################################
 # Global variables

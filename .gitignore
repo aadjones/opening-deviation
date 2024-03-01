@@ -6,3 +6,10 @@ cleanenv/
 *.egg-info
 __pycache__
 .vscode/
+
+# Sphinx documentation builds
+docs/build/
+*.pyc
+# If you use a virtual environment for Sphinx
+venv/
+.myenv/

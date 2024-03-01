@@ -1,5 +1,5 @@
-from modules.chess_utils import find_deviation, read_pgn, pgn_string_to_game
-from modules.deviation_result import DeviationResult
+from logic.chess_utils import find_deviation, read_pgn, pgn_string_to_game
+from logic.deviation_result import DeviationResult
 
 PGN_PATH = 'pgns/'
 
