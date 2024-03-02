@@ -52,6 +52,24 @@ def find_deviation(
     # If we reach the end without finding a deviation, return None
     return None
 
+def get_player_color(recent_game: chess.pgn.Game, player_name: str) -> Optional[str]:
+    """
+    Determines the color the player was playing as in a given game.
+
+    :param recent_game: chess.pgn.Game, the game to check
+    :param player_name: str, the name or identifier of the player
+    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black, or None if the player name does not match either player
+    """
+    white_player = recent_game.headers["White"]
+    black_player = recent_game.headers["Black"]
+
+    if player_name == white_player:
+        return "White"
+    elif player_name == black_player:
+        return "Black"
+    else:
+        return None
+
 
 def pgn_string_to_game(pgn_str: str) -> chess.pgn.Game:
     """
