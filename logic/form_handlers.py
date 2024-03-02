@@ -32,7 +32,7 @@ def handle_form_submission(username: str, study_url: str, chapter_number: str) -
     reference_game = pgn_string_to_game(ref_pgn_str)
 
     # Find deviation between games
-    deviation_info = find_deviation(reference_game, test_game)
+    deviation_info = find_deviation(reference_game, test_game, username)
 
     display_deviation_info(deviation_info)
 

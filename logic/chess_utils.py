@@ -10,13 +10,14 @@ from .deviation_result import DeviationResult
 
 
 def find_deviation(
-        repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game) -> Optional[DeviationResult]:
+        repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
     """
     Compares the moves of a recent game against a repertoire game 
     and finds the first move that deviates.
 
     :param repertoire_game: chess.pgn.Game, the opening repertoire game
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
+    :param username: str, the name or identifier of the player
     :return: DeviationResult, or None if there's no deviation
     """
     # Initialize a board for each game to track the position
@@ -24,6 +25,7 @@ def find_deviation(
     recent_board = recent_game.board()
     repertoire_moves = repertoire_game.mainline_moves()
     my_game_moves = recent_game.mainline_moves()
+    my_color = get_player_color(recent_game, username)
 
     # Iterate through moves of both games simultaneously
     moves_list = enumerate(zip(repertoire_moves, my_game_moves), start=1)
@@ -38,6 +40,8 @@ def find_deviation(
             # the board is in the correct state to check for legality and generate SAN
             illegal_msg = f'Illegal move: {recent_move} at position {recent_board.fen()}'
             assert recent_move in recent_board.legal_moves, illegal_msg
+            if my_color != player_color: # If the opponent was first to deviate, return None
+                return None
             deviation_san = recent_board.san(recent_move)
             reference_san = repertoire_board.san(rep_move)
 
@@ -60,13 +64,13 @@ def get_player_color(recent_game: chess.pgn.Game, player_name: str) -> Optional[
     :param player_name: str, the name or identifier of the player
     :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black, or None if the player name does not match either player
     """
-    white_player = recent_game.headers["White"]
-    black_player = recent_game.headers["Black"]
+    white_player = recent_game.headers['White']
+    black_player = recent_game.headers['Black']
 
     if player_name == white_player:
-        return "White"
+        return 'White'
     elif player_name == black_player:
-        return "Black"
+        return 'Black'
     else:
         return None
 
