@@ -9,6 +9,36 @@ import chess.pgn
 from .deviation_result import DeviationResult
 
 
+def compare_moves(
+    recent_board: chess.Board, 
+    repertoire_board: chess.Board, 
+    rep_move: chess.Move, 
+    recent_move: chess.Move, 
+    player_color: str, 
+    my_color: str, 
+    whole_move_number: int
+) -> Optional[DeviationResult]:
+    """
+    Compares a pair of moves from recent and repertoire games, checking for deviations.
+
+    :param recent_board: chess.Board, the chess board with the recent game's state.
+    :param repertoire_board: chess.Board, the chess board with the repertoire game's state.
+    :param rep_move: chess.Move, the current move from the repertoire game.
+    :param recent_move: chess.Move, the current move from the recent game.
+    :param player_color: str, the color of the player making the current move.
+    :param my_color: str, the color the user is playing in the recent game.
+    :param whole_move_number: int, the whole move number for display.
+    :return: DeviationResult, or None if there's no deviation.
+    """
+    illegal_msg = f'Illegal move: {recent_move} at position {recent_board.fen()}'
+    assert recent_move in recent_board.legal_moves, illegal_msg
+    if my_color != player_color:  # If the opponent was first to deviate, return None
+        return None
+    deviation_san = recent_board.san(recent_move)
+    reference_san = repertoire_board.san(rep_move)
+    return DeviationResult(whole_move_number, deviation_san, reference_san, player_color)
+
+
 def find_deviation(
         repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
     """
@@ -36,19 +66,7 @@ def find_deviation(
 
         # Compare moves before pushing them to the board
         if rep_move != recent_move:
-            # Since the move has not been made yet,
-            # the board is in the correct state to check for legality and generate SAN
-            illegal_msg = f'Illegal move: {recent_move} at position {recent_board.fen()}'
-            assert recent_move in recent_board.legal_moves, illegal_msg
-            if my_color != player_color: # If the opponent was first to deviate, return None
-                return None
-            deviation_san = recent_board.san(recent_move)
-            reference_san = repertoire_board.san(rep_move)
-
-            # Now, return the whole move number
-            # and the SAN notation of the deviating move from the recent game
-            return DeviationResult(whole_move_number, deviation_san, reference_san, player_color)
-
+            return compare_moves(recent_board, repertoire_board, rep_move, recent_move, player_color, my_color, whole_move_number)
         # If the moves are the same, then push them to their respective boards
         recent_board.push(recent_move)
         repertoire_board.push(rep_move)
@@ -69,10 +87,10 @@ def get_player_color(recent_game: chess.pgn.Game, player_name: str) -> Optional[
 
     if player_name == white_player:
         return 'White'
-    elif player_name == black_player:
+    if player_name == black_player:
         return 'Black'
-    else:
-        return None
+    # Else:
+    return None
 
 
 def pgn_string_to_game(pgn_str: str) -> chess.pgn.Game:
