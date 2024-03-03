@@ -5,36 +5,28 @@ This module provides the logic for the user input/output on the website through 
 from typing import Optional
 import streamlit as st
 from .lichess_api import get_pgn_from_study, get_last_games_pgn
-from .chess_utils import pgn_string_to_game, find_deviation
+from .chess_utils import pgn_string_to_game, find_deviation, find_deviation_in_entire_study, pgn_to_pgn_list
 from .deviation_result import DeviationResult
 
 
-def handle_form_submission(username: str, study_url: str, chapter_number: str) -> None:
+def handle_form_submission(username: str, study_url: str, max_games: int) -> None:
     """
     Handles form submission and displays the result.
 
     :param username: str, the Lichess username
     :param study_url: str, the URL of the Lichess study
-    :param chapter_number: str, the chapter number of the Lichess study
+    :param max_games: int, the number of games to look at the user's history
     :return: None
     """
-    chapter = int(chapter_number)
-
-    # Get the PGN data from the Lichess study
-    ref_pgn_str = get_pgn_from_study(study_url, chapter)
 
     # Fetch the last game played by the user
-    max_games = 1
     test_game_str = get_last_games_pgn(username, max_games)
-
-    # Convert PGN strings to game objects
-    test_game = pgn_string_to_game(test_game_str)
-    reference_game = pgn_string_to_game(ref_pgn_str)
+    test_game_list = pgn_to_pgn_list(test_game_str)
 
     # Find deviation between games
-    deviation_info = find_deviation(reference_game, test_game, username)
-
-    display_deviation_info(deviation_info)
+    for game in test_game_list:
+        deviation_info = find_deviation_in_entire_study(study_url, game, username)
+        display_deviation_info(deviation_info)
 
 
 def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:

@@ -2,7 +2,7 @@
 This module handles requests to the Lichess API to get the last games from a username
 and get study data from a Lichess study.
 """
-from typing import Optional
+from typing import Optional, Any, Dict
 import re
 import requests
 from requests.adapters import HTTPAdapter
@@ -109,3 +109,19 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
         return f'Chapter {chapter_number} PGN not found or not valid.'
 
     return chapter_pgn
+
+def get_study_chapters_count(study_id: str) -> int:
+    """
+    Gets the number of chapters in a Lichess study.
+    :param study_id: str, the url for a Lichess study
+    :return: int, the number of chapters in the study
+    """
+    url: str = f"https://lichess.org/api/study/{study_id}.pgn"
+    response: requests.Response = requests.get(url)
+    if response.status_code != 200:
+        return f'Failed to fetch study. Status code: {response.status_code}'
+
+    # Extract the PGN data for the entire study
+    full_pgn_data = response.text
+    chapters = full_pgn_data.strip().split('\n\n\n')
+    return len(chapters)

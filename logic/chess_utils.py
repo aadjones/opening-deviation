@@ -4,9 +4,12 @@ This module provides utility functions for chess analysis.
 
 import io
 import os
-from typing import Optional
+from typing import Optional, List
+import requests
 import chess.pgn
 from .deviation_result import DeviationResult
+from .lichess_api import extract_study_id_from_url
+
 
 
 def compare_moves(
@@ -59,10 +62,10 @@ def find_deviation(
 
     # Iterate through moves of both games simultaneously
     moves_list = enumerate(zip(repertoire_moves, my_game_moves), start=1)
-    for move_number, (rep_move, recent_move) in moves_list:
+    for half_move_number, (rep_move, recent_move) in moves_list:
         player_color = 'White' if recent_board.turn else 'Black'
         # Whole move count for display; move_number will be measured in ply (half-moves)
-        whole_move_number = (move_number + 1) // 2
+        whole_move_number = (half_move_number + 1) // 2
 
         # Compare moves before pushing them to the board
         if rep_move != recent_move:
@@ -73,6 +76,27 @@ def find_deviation(
 
     # If we reach the end without finding a deviation, return None
     return None
+
+def find_deviation_in_entire_study(
+    url: str, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
+    """
+    """
+    study_id = extract_study_id_from_url(url)
+    url: str = f"https://lichess.org/api/study/{study_id}.pgn"
+    response: requests.Response = requests.get(url)
+    if response.status_code != 200:
+        print(f'Failed to fetch study. Status code: {response.status_code}')
+        return None
+
+    # Extract the PGN data for the entire study
+    full_pgn_data = response.text
+    chapters = pgn_to_pgn_list(full_pgn_data)
+    for ref_game in chapters:
+        deviation = find_deviation(ref_game, recent_game, username)
+        if deviation:
+            return deviation
+    return None
+
 
 def get_player_color(recent_game: chess.pgn.Game, player_name: str) -> Optional[str]:
     """
@@ -131,3 +155,10 @@ def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
     """
     with open(pgn_file_path, 'r', encoding='utf-8') as pgn_file:
         return chess.pgn.read_game(pgn_file)
+    
+def pgn_to_pgn_list(pgn_data: str) -> List[chess.pgn.Game]:
+    """
+    Splits a pgn with multiple games into a list of pgns with one game each
+    """
+    pgn_list_str = pgn_data.strip().split('\n\n\n')
+    return [pgn_string_to_game(game) for game in pgn_list_str]

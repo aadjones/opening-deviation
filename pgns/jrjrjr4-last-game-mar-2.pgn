@@ -1,0 +1,21 @@
+[Event "Rated Blitz game"]
+[Site "https://lichess.org/CbeepjGF"]
+[Date "2024.03.01"]
+[White "Jrjrjr4"]
+[Black "slickmick432"]
+[Result "0-1"]
+[UTCDate "2024.03.01"]
+[UTCTime "00:33:29"]
+[WhiteElo "2144"]
+[BlackElo "2152"]
+[WhiteRatingDiff "-6"]
+[BlackRatingDiff "+5"]
+[Variant "Standard"]
+[TimeControl "180+2"]
+[ECO "A52"]
+[Opening "Indian Defense: Budapest Defense, Rubinstein Variation"]
+[Termination "Normal"]
+
+1. d4 Nf6 2. c4 e5 3. dxe5 Ng4 4. Bf4 Nc6 5. Nf3 Bb4+ 6. Nbd2 Qe7 7. a3 Ngxe5 8. Nxe5 Nxe5 9. e3 Bxd2+ 10. Qxd2 d6 11. Qc3 b6 12. b4 Ng6 13. Qxg7 Bb7 14. Be2 Bxg2 15. Rg1 Bb7 16. Rxg6 hxg6 17. Qxh8+ Kd7 18. Qh3+ Ke8 19. O-O-O Qf6 20. Kb1 a5 21. b5 Qc3 22. Rd3 Be4 23. Bg5 Bxd3+ 24. Bxd3 Qxd3+ 25. Kb2 Qd2+ 26. Kb3 a4# 0-1
+
+
