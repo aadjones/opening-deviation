@@ -23,10 +23,11 @@ st.title('Chess Opening Repertoire Practice')
 # Input form
 with st.form(key='opening_form'):
     username = st.text_input(label='Enter your Lichess username')
-    study_url = st.text_input(label='Enter the URL of your Lichess public study')
+    study_url_white = st.text_input(label='Enter the URL of your White Lichess study')
+    study_url_black = st.text_input(label='Enter the URL of your Black Lichess study')
     max_games = st.text_input(label='Enter number of games to analyze')
     submit_button = st.form_submit_button(label='Submit')
 
 # Handling form submission
 if submit_button:
-    handle_form_submission(username, study_url, int(max_games))
+    handle_form_submission(username, study_url_white, study_url_black, int(max_games))

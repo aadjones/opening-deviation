@@ -80,6 +80,13 @@ def find_deviation(
 def find_deviation_in_entire_study(
     url: str, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
     """
+    Compares the moves of a recent game against a study of repertoire games, one per chapter, 
+    and finds the first move that deviates.
+
+    :param url: str, the URL to the Liches study
+    :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
+    :param username: str, the name or identifier of the player
+    :return: DeviationResult, or None if there's no deviation
     """
     study_id = extract_study_id_from_url(url)
     url: str = f"https://lichess.org/api/study/{study_id}.pgn"
@@ -159,6 +166,9 @@ def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
 def pgn_to_pgn_list(pgn_data: str) -> List[chess.pgn.Game]:
     """
     Splits a pgn with multiple games into a list of pgns with one game each
+
+    :param pgn_data: str, a PGN string, possibly containing many games, separated by 3 new lines each
+    :return: List[chess.pgn.Game], a list of chess game objects read in from the PGN string
     """
     pgn_list_str = pgn_data.strip().split('\n\n\n')
     return [pgn_string_to_game(game) for game in pgn_list_str]

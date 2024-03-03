@@ -113,6 +113,7 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
 def get_study_chapters_count(study_id: str) -> int:
     """
     Gets the number of chapters in a Lichess study.
+    
     :param study_id: str, the url for a Lichess study
     :return: int, the number of chapters in the study
     """
@@ -125,3 +126,4 @@ def get_study_chapters_count(study_id: str) -> int:
     full_pgn_data = response.text
     chapters = full_pgn_data.strip().split('\n\n\n')
     return len(chapters)
+
