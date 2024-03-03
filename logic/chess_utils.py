@@ -11,15 +11,14 @@ from .deviation_result import DeviationResult
 from .lichess_api import extract_study_id_from_url
 
 
-
 def compare_moves(
-    recent_board: chess.Board, 
-    repertoire_board: chess.Board, 
-    rep_move: chess.Move, 
-    recent_move: chess.Move, 
-    player_color: str, 
-    my_color: str, 
-    whole_move_number: int
+    recent_board: chess.Board,
+    repertoire_board: chess.Board,
+    rep_move: chess.Move,
+    recent_move: chess.Move,
+    player_color: str,
+    my_color: str,
+    whole_move_number: int,
 ) -> Optional[DeviationResult]:
     """
     Compares a pair of moves from recent and repertoire games, checking for deviations.
@@ -33,19 +32,26 @@ def compare_moves(
     :param whole_move_number: int, the whole move number for display.
     :return: DeviationResult, or None if there's no deviation.
     """
-    illegal_msg = f'Illegal move: {recent_move} at position {recent_board.fen()}'
+    illegal_msg = (
+        f"Illegal move: {recent_move} at position {recent_board.fen()}"
+    )
     assert recent_move in recent_board.legal_moves, illegal_msg
-    if my_color != player_color:  # If the opponent was first to deviate, return None
+    if (
+        my_color != player_color
+    ):  # If the opponent was first to deviate, return None
         return None
     deviation_san = recent_board.san(recent_move)
     reference_san = repertoire_board.san(rep_move)
-    return DeviationResult(whole_move_number, deviation_san, reference_san, player_color)
+    return DeviationResult(
+        whole_move_number, deviation_san, reference_san, player_color
+    )
 
 
 def find_deviation(
-        repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
+    repertoire_game: chess.pgn.Game, recent_game: chess.pgn.Game, username: str
+) -> Optional[DeviationResult]:
     """
-    Compares the moves of a recent game against a repertoire game 
+    Compares the moves of a recent game against a repertoire game
     and finds the first move that deviates.
 
     :param repertoire_game: chess.pgn.Game, the opening repertoire game
@@ -63,13 +69,21 @@ def find_deviation(
     # Iterate through moves of both games simultaneously
     moves_list = enumerate(zip(repertoire_moves, my_game_moves), start=1)
     for half_move_number, (rep_move, recent_move) in moves_list:
-        player_color = 'White' if recent_board.turn else 'Black'
+        player_color = "White" if recent_board.turn else "Black"
         # Whole move count for display; move_number will be measured in ply (half-moves)
         whole_move_number = (half_move_number + 1) // 2
 
         # Compare moves before pushing them to the board
         if rep_move != recent_move:
-            return compare_moves(recent_board, repertoire_board, rep_move, recent_move, player_color, my_color, whole_move_number)
+            return compare_moves(
+                recent_board,
+                repertoire_board,
+                rep_move,
+                recent_move,
+                player_color,
+                my_color,
+                whole_move_number,
+            )
         # If the moves are the same, then push them to their respective boards
         recent_board.push(recent_move)
         repertoire_board.push(rep_move)
@@ -77,10 +91,12 @@ def find_deviation(
     # If we reach the end without finding a deviation, return None
     return None
 
+
 def find_deviation_in_entire_study(
-    url: str, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
+    url: str, recent_game: chess.pgn.Game, username: str
+) -> Optional[DeviationResult]:
     """
-    Compares the moves of a recent game against a study of repertoire games, one per chapter, 
+    Compares the moves of a recent game against a study of repertoire games, one per chapter,
     and finds the first move that deviates.
 
     :param url: str, the URL to the Lichess study
@@ -92,7 +108,7 @@ def find_deviation_in_entire_study(
     url: str = f"https://lichess.org/api/study/{study_id}.pgn"
     response: requests.Response = requests.get(url)
     if response.status_code != 200:
-        print(f'Failed to fetch study. Status code: {response.status_code}')
+        print(f"Failed to fetch study. Status code: {response.status_code}")
         return None
 
     # Extract the PGN data for the entire study
@@ -104,10 +120,15 @@ def find_deviation_in_entire_study(
             return deviation
     return None
 
+
 def find_deviation_in_entire_study_white_and_black(
-    white_study: str, black_study: str, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
+    white_study: str,
+    black_study: str,
+    recent_game: chess.pgn.Game,
+    username: str,
+) -> Optional[DeviationResult]:
     """
-    Compares the moves of a recent game against a study of repertoire games, one per chapter, 
+    Compares the moves of a recent game against a study of repertoire games, one per chapter,
     and finds the first move that deviates.
 
     :param white_study: str, the URL to the White Lichess study
@@ -122,14 +143,18 @@ def find_deviation_in_entire_study_white_and_black(
     black_url: str = f"https://lichess.org/api/study/{black_study_id}.pgn"
     white_response: requests.Response = requests.get(white_url)
     if white_response.status_code != 200:
-        print(f'Failed to fetch study. Status code: {white_response.status_code}')
+        print(
+            f"Failed to fetch study. Status code: {white_response.status_code}"
+        )
         return None
 
     black_response: requests.Response = requests.get(black_url)
     if black_response.status_code != 200:
-        print(f'Failed to fetch study. Status code: {black_response.status_code}')
+        print(
+            f"Failed to fetch study. Status code: {black_response.status_code}"
+        )
         return None
-    
+
     # Extract the PGN data for the white and black studies
     white_pgn_data = white_response.text
     white_chapters = pgn_to_pgn_list(white_pgn_data)
@@ -137,10 +162,10 @@ def find_deviation_in_entire_study_white_and_black(
     black_chapters = pgn_to_pgn_list(black_pgn_data)
     chapters = []
 
-    if get_player_color(recent_game, username) == 'White': 
+    if get_player_color(recent_game, username) == "White":
         chapters = white_chapters
-    
-    if get_player_color(recent_game, username) == 'Black':
+
+    if get_player_color(recent_game, username) == "Black":
         chapters = black_chapters
 
     for ref_game in chapters:
@@ -150,21 +175,25 @@ def find_deviation_in_entire_study_white_and_black(
     return None
 
 
-def get_player_color(recent_game: chess.pgn.Game, player_name: str) -> Optional[str]:
+def get_player_color(
+    recent_game: chess.pgn.Game, player_name: str
+) -> Optional[str]:
     """
     Determines the color the player was playing as in a given game.
 
     :param recent_game: chess.pgn.Game, the game to check
     :param player_name: str, the name or identifier of the player
-    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black, or None if the player name does not match either player
+    :return: 'White' if the player was playing as White,
+    'Black' if the player was playing as Black, or
+    None if the player name does not match either player
     """
-    white_player = recent_game.headers['White']
-    black_player = recent_game.headers['Black']
+    white_player = recent_game.headers["White"]
+    black_player = recent_game.headers["Black"]
 
     if player_name == white_player:
-        return 'White'
+        return "White"
     if player_name == black_player:
-        return 'Black'
+        return "Black"
     # Else:
     return None
 
@@ -192,11 +221,12 @@ def write_pgn(pgn_data: str, filename: str) -> None:
     full_path = os.path.join(os.getcwd(), filename)
 
     # Open the file in write mode (wb for binary) and write the PGN data
-    with open(full_path, 'wb') as f:
+    with open(full_path, "wb") as f:
         f.write(pgn_data.encode())  # Convert string to bytes
 
-    #Print confirmation message
-    print(f'PGN data successfully saved to: {full_path}')
+    # Print confirmation message
+    print(f"PGN data successfully saved to: {full_path}")
+
 
 def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
     """
@@ -205,15 +235,18 @@ def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
     :param pgn_file_path: str, the path to the PGN file
     :return: chess.pgn.Game, the chess game object read from the PGN file
     """
-    with open(pgn_file_path, 'r', encoding='utf-8') as pgn_file:
+    with open(pgn_file_path, "r", encoding="utf-8") as pgn_file:
         return chess.pgn.read_game(pgn_file)
-    
+
+
 def pgn_to_pgn_list(pgn_data: str) -> List[chess.pgn.Game]:
     """
     Splits a pgn with multiple games into a list of pgns with one game each
 
-    :param pgn_data: str, a PGN string, possibly containing many games, separated by 3 new lines each
-    :return: List[chess.pgn.Game], a list of chess game objects read in from the PGN string
+    :param pgn_data: str, a PGN string, possibly containing many games,
+    separated by 3 new lines each
+    :return: List[chess.pgn.Game], a list of chess game objects
+    read in from the PGN string
     """
-    pgn_list_str = pgn_data.strip().split('\n\n\n')
+    pgn_list_str = pgn_data.strip().split("\n\n\n")
     return [pgn_string_to_game(game) for game in pgn_list_str]
