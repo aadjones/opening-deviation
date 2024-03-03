@@ -22,9 +22,12 @@ st.title('Chess Opening Repertoire Practice')
 
 # Input form
 with st.form(key='opening_form'):
-    username = st.text_input(label='Enter your Lichess username')
-    study_url_white = st.text_input(label='Enter the URL of your White Lichess study')
-    study_url_black = st.text_input(label='Enter the URL of your Black Lichess study')
+    default_username = 'Jrjrjr4'
+    username = st.text_input(label='Enter your Lichess username', value=default_username)
+    default_white_study = 'https://lichess.org/study/14RZiFdX/fvGLXd1D'
+    study_url_white = st.text_input(label='Enter the URL of your White Lichess study', value=default_white_study)
+    default_black_study = 'https://lichess.org/study/bve0Qw48/7ZVSY8Po'
+    study_url_black = st.text_input(label='Enter the URL of your Black Lichess study', value=default_black_study)
     max_games = st.text_input(label='Enter number of games to analyze')
     submit_button = st.form_submit_button(label='Submit')
 

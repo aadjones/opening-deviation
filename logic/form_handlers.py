@@ -5,7 +5,7 @@ This module provides the logic for the user input/output on the website through 
 from typing import Optional
 import streamlit as st
 from .lichess_api import get_pgn_from_study, get_last_games_pgn
-from .chess_utils import pgn_string_to_game, find_deviation, find_deviation_in_entire_study, pgn_to_pgn_list
+from .chess_utils import *
 from .deviation_result import DeviationResult
 
 
@@ -26,7 +26,7 @@ def handle_form_submission(username: str, study_url_white: str, study_url_black:
 
     # Find deviation between games
     for game in test_game_list:
-        deviation_info = find_deviation_in_entire_study(study_url, game, username)
+        deviation_info = find_deviation_in_entire_study_white_and_black(study_url_white, study_url_black, game, username)
         display_deviation_info(deviation_info)
 
 

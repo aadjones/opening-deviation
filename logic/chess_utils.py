@@ -83,7 +83,7 @@ def find_deviation_in_entire_study(
     Compares the moves of a recent game against a study of repertoire games, one per chapter, 
     and finds the first move that deviates.
 
-    :param url: str, the URL to the Liches study
+    :param url: str, the URL to the Lichess study
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
     :param username: str, the name or identifier of the player
     :return: DeviationResult, or None if there's no deviation
@@ -98,6 +98,51 @@ def find_deviation_in_entire_study(
     # Extract the PGN data for the entire study
     full_pgn_data = response.text
     chapters = pgn_to_pgn_list(full_pgn_data)
+    for ref_game in chapters:
+        deviation = find_deviation(ref_game, recent_game, username)
+        if deviation:
+            return deviation
+    return None
+
+def find_deviation_in_entire_study_white_and_black(
+    white_study: str, black_study: str, recent_game: chess.pgn.Game, username: str) -> Optional[DeviationResult]:
+    """
+    Compares the moves of a recent game against a study of repertoire games, one per chapter, 
+    and finds the first move that deviates.
+
+    :param white_study: str, the URL to the White Lichess study
+    :param black_study: str, the URL to the Black Lichess study
+    :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
+    :param username: str, the name or identifier of the player
+    :return: DeviationResult, or None if there's no deviation
+    """
+    white_study_id = extract_study_id_from_url(white_study)
+    black_study_id = extract_study_id_from_url(black_study)
+    white_url: str = f"https://lichess.org/api/study/{white_study_id}.pgn"
+    black_url: str = f"https://lichess.org/api/study/{black_study_id}.pgn"
+    white_response: requests.Response = requests.get(white_url)
+    if white_response.status_code != 200:
+        print(f'Failed to fetch study. Status code: {white_response.status_code}')
+        return None
+
+    black_response: requests.Response = requests.get(black_url)
+    if black_response.status_code != 200:
+        print(f'Failed to fetch study. Status code: {black_response.status_code}')
+        return None
+    
+    # Extract the PGN data for the white and black studies
+    white_pgn_data = white_response.text
+    white_chapters = pgn_to_pgn_list(white_pgn_data)
+    black_pgn_data = black_response.text
+    black_chapters = pgn_to_pgn_list(black_pgn_data)
+    chapters = []
+
+    if get_player_color(recent_game, username) == 'White': 
+        chapters = white_chapters
+    
+    if get_player_color(recent_game, username) == 'Black':
+        chapters = black_chapters
+
     for ref_game in chapters:
         deviation = find_deviation(ref_game, recent_game, username)
         if deviation:
