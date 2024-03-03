@@ -9,12 +9,13 @@ from .chess_utils import pgn_string_to_game, find_deviation, find_deviation_in_e
 from .deviation_result import DeviationResult
 
 
-def handle_form_submission(username: str, study_url: str, max_games: int) -> None:
+def handle_form_submission(username: str, study_url_white: str, study_url_black: str, max_games: int) -> None:
     """
     Handles form submission and displays the result.
 
     :param username: str, the Lichess username
-    :param study_url: str, the URL of the Lichess study
+    :param study_url_white: str, the URL of the White Lichess study
+    :param study_url_white: str, the URL of the Black Lichess study
     :param max_games: int, the number of games to look at the user's history
     :return: None
     """
