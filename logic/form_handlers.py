@@ -5,7 +5,10 @@ This module provides the logic for the user input/output on the website through 
 from typing import Optional
 import streamlit as st
 from .lichess_api import get_last_games_pgn
-from .chess_utils import pgn_to_pgn_list, find_deviation_in_entire_study_white_and_black
+from .chess_utils import (
+    pgn_to_pgn_list,
+    find_deviation_in_entire_study_white_and_black,
+)
 from .deviation_result import DeviationResult
 
 
