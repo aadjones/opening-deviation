@@ -2,11 +2,11 @@
 This module provides the logic for the user input/output on the website through streamlit.
 """
 
-from typing import Optional
+from typing import Optional, List
+import base64
 import chess
 import chess.svg
 from chess.svg import Arrow
-import base64
 import streamlit as st
 from .lichess_api import get_last_games_pgn
 from .chess_utils import (
@@ -24,7 +24,7 @@ def handle_form_submission(
 
     :param username: str, the Lichess username
     :param study_url_white: str, the URL of the White Lichess study
-    :param study_url_white: str, the URL of the Black Lichess study
+    :param study_url_black: str, the URL of the Black Lichess study
     :param max_games: int, the number of games to look at the user's history
     :return: None
     """
@@ -56,11 +56,7 @@ def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
         board_svg = get_board_svg_with_arrows(
             deviation_info.board, ref_move, dev_move, color
         )
-        board_image = svg_to_image_with_base64(board_svg)
-        st.image(
-            board_image, caption="Red = game move; Blue = repertoire move"
-        )
-
+        st.markdown(board_svg, unsafe_allow_html=True)
         # For example, move 2 will be 2. if White or 2... if Black
         periods = "." if color == "White" else "..."
         dev_move_notation = f"{i}{periods}{dev_move}"
@@ -119,6 +115,94 @@ def get_board_svg_with_arrows(
         board=board,
         arrows=[arrow_1, arrow_2],
         orientation=perspective,
-        size=350,
+        size=200,
     )
     return svg
+
+
+def display_image_grid(images: List[str], max_cols: int = 4) -> None:
+    """
+    Displays a grid of SVG images in Streamlit, ensuring up to a
+    specified maximum number of columns.
+
+    :param images: List of SVG formatted images as strings.
+    :param max_cols: Maximum number of columns in the grid. Defaults to 4.
+    """
+    cols = st.columns(max_cols)  # Prepare columns
+
+    for idx, image in enumerate(images):
+        # Assuming SVGs might need width adjustment; insert style attribute for width control
+        updated_image = image.replace(
+            "<svg ", '<svg style="width:100%; height:auto;" ', 1
+        )
+
+        with cols[idx % max_cols]:
+            st.markdown(updated_image, unsafe_allow_html=True)
+
+
+def get_image_from_deviation_info(
+    deviation_info: Optional[DeviationResult],
+) -> str:
+    """
+    Get the corresponding svg from a deviation result, or return None if there is a None input.
+
+    :param deviation_info: DeviationResult, a deviation from your game, or None if there was no deviation
+    :return str, the svg data correpsonding to that result, or a clear board svg if there is no deviation
+    """
+    if deviation_info:
+        dev_move = deviation_info.deviation_san
+        ref_move = deviation_info.reference_san
+        color = deviation_info.player_color
+        board_svg = get_board_svg_with_arrows(
+            deviation_info.board, ref_move, dev_move, color
+        )
+        return board_svg
+    # Else there was no deviation
+    board = chess.Board()
+    board.clear()
+    svg = chess.svg.board(board, size=200)
+    return svg
+
+
+def get_image_grid_from_deviation_list(
+    deviation_list: List[Optional[DeviationResult]],
+) -> List[str]:
+    """
+    From a list of deviations, form a list of svg outputs.
+
+    :param deviation_list: List[Optional[DeviationResult]], the list of deviations
+    :return List[str], the svg data in a list
+    """
+    svg_data = [get_image_from_deviation_info(info) for info in deviation_list]
+    return svg_data
+
+
+def handle_form_submission_grid(
+    username: str,
+    study_url_white: str,
+    study_url_black: str,
+    max_games: int,
+) -> None:
+    """
+    Handles form submission and displays the result in a grid
+
+    :param username: str, the Lichess username
+    :param study_url_white: str, the URL of the White Lichess study
+    :param study_url_black: str, the URL of the Black Lichess study
+    :param max_games: int, the number of games to look at the user's history
+    :return: None
+    """
+
+    # Fetch the last game played by the user
+    test_game_str = get_last_games_pgn(username, max_games)
+    test_game_list = pgn_to_pgn_list(test_game_str)
+
+    # Find deviation between games
+    info_list = []
+    for game in test_game_list:
+        deviation_info = find_deviation_in_entire_study_white_and_black(
+            study_url_white, study_url_black, game, username
+        )
+        info_list.append(deviation_info)
+    grid = get_image_grid_from_deviation_list(info_list)
+    display_image_grid(grid)
