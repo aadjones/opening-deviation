@@ -187,9 +187,7 @@ def get_player_color(
 
     :param recent_game: chess.pgn.Game, the game to check
     :param player_name: str, the name or identifier of the player
-    :return: 'White' if the player was playing as White,
-    'Black' if the player was playing as Black, or
-    None if the player name does not match either player
+    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black, or None if the player name does not match either player
     """
     white_player = recent_game.headers["White"]
     black_player = recent_game.headers["Black"]
@@ -247,10 +245,8 @@ def pgn_to_pgn_list(pgn_data: str) -> List[chess.pgn.Game]:
     """
     Splits a pgn with multiple games into a list of pgns with one game each
 
-    :param pgn_data: str, a PGN string, possibly containing many games,
-    separated by 3 new lines each
-    :return: List[chess.pgn.Game], a list of chess game objects
-    read in from the PGN string
+    :param pgn_data: str, a PGN string, possibly containing many games, separated by 3 new lines each
+    :return: List[chess.pgn.Game], a list of chess game objects read in from the PGN string
     """
     pgn_list_str = pgn_data.strip().split("\n\n\n")
     return [pgn_string_to_game(game) for game in pgn_list_str]

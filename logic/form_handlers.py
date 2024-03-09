@@ -70,8 +70,9 @@ def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
 def svg_to_image_with_base64(svg: str) -> str:
     """
     Converts SVG string to format compatible with st.image using base64 encoding.
+
     :param svg: str, a string with svg data
-    :return str, the converted output format that is compatible with st.image
+    :return: str, the converted output format that is compatible with st.image
     """
     # Encode SVG string to base64
     svg_base64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
@@ -84,6 +85,7 @@ def san_to_arrow(
 ) -> Arrow:
     """
     Converts a move in Standard Algebraic Notation (SAN) to an Arrow object.
+
     :param board: chess.Board, a board state
     :param move_san: str, the SAN for the move to draw an Arrow along
     :param color: str, the color of the arrow. Defaults to blue.
@@ -101,6 +103,7 @@ def get_board_svg_with_arrows(
 ) -> str:
     """
     Draws arrows for the repertoire move (in red) and the game move (in blue).
+
     :param board: chess.Board, a board state
     :param rep_move: str, the repertoire move in SAN
     :param game_move: str, the played move in SAN
@@ -127,6 +130,7 @@ def display_image_grid(images: List[str], max_cols: int = 4) -> None:
 
     :param images: List of SVG formatted images as strings.
     :param max_cols: Maximum number of columns in the grid. Defaults to 4.
+    :return: None
     """
     cols = st.columns(max_cols)  # Prepare columns
 
@@ -147,7 +151,7 @@ def get_image_from_deviation_info(
     Get the corresponding svg from a deviation result, or return None if there is a None input.
 
     :param deviation_info: DeviationResult, a deviation from your game, or None if there was no deviation
-    :return str, the svg data correpsonding to that result, or a clear board svg if there is no deviation
+    :return: str, the svg data correpsonding to that result, or a clear board svg if there is no deviation
     """
     if deviation_info:
         dev_move = deviation_info.deviation_san
@@ -171,7 +175,7 @@ def get_image_grid_from_deviation_list(
     From a list of deviations, form a list of svg outputs.
 
     :param deviation_list: List[Optional[DeviationResult]], the list of deviations
-    :return List[str], the svg data in a list
+    :return: List[str], the svg data in a list
     """
     svg_data = [get_image_from_deviation_info(info) for info in deviation_list]
     return svg_data

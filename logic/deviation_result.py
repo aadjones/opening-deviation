@@ -16,6 +16,7 @@ class DeviationResult:
         deviation_san (str): The Standard Algebraic Notation (SAN) of the deviating move.
         reference_san (str): The SAN of the expected move in the repertoire.
         player_color (str): The color of the player who deviated.
+        board (chess.Board): A board state to represent the position right before the deviation.
     """
 
     def __init__(
