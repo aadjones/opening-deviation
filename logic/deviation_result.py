@@ -36,10 +36,10 @@ class DeviationResult:
     def __repr__(self):
         return (
             f"DeviationResult(whole_move_number={self.whole_move_number}, "
-            f"deviation_san='{self.deviation_san}', "
-            f"reference_san='{self.reference_san}', "
-            f"player_color='{self.player_color}', "
-            f"board_fen='{self.board.fen()}')"
+            f"deviation_san={self.deviation_san!r}, "
+            f"reference_san={self.reference_san!r}, "
+            f"player_color={self.player_color!r}, "
+            f"board_fen={self.board.fen()!r})"
         )
 
     def __eq__(self, other):

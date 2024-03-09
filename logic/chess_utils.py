@@ -71,7 +71,9 @@ def find_deviation(
     my_color = get_player_color(recent_game, username)
 
     # Iterate through moves of both games simultaneously
-    moves_list = enumerate(zip(repertoire_moves, my_game_moves), start=1)
+    moves_list = enumerate(
+        zip(repertoire_moves, my_game_moves, strict=False), start=1
+    )
     for half_move_number, (rep_move, recent_move) in moves_list:
         player_color = "White" if recent_board.turn else "Black"
         # Whole move count for display; move_number will be measured in ply (half-moves)
@@ -187,7 +189,8 @@ def get_player_color(
 
     :param recent_game: chess.pgn.Game, the game to check
     :param player_name: str, the name or identifier of the player
-    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black, or None if the player name does not match either player
+    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black,
+    or None if the player name does not match either player
     """
     white_player = recent_game.headers["White"]
     black_player = recent_game.headers["Black"]
