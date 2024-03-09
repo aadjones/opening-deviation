@@ -1,0 +1,21 @@
+name: Python Linting
+
+on: [push, pull_request]
+
+jobs:
+  flake8:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install flake8 and flake8-bugbear
+        run: pip install flake8 flake8-bugbear
+
+      - name: Run flake8
+        run: flake8 . --exclude=.git,__pycache__,docs/source/conf.py,old,build,dist,venv,myenv
