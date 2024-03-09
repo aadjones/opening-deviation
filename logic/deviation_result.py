@@ -3,6 +3,9 @@ This module contains the DeviationResult class for representing when your chess 
 first deviates from a reference game.
 """
 
+import chess
+from typing import Optional
+
 
 class DeviationResult:
     """
@@ -21,18 +24,21 @@ class DeviationResult:
         deviation_san: str,
         reference_san: str,
         player_color: str,
+        board: Optional[chess.Board] = None,
     ):
         self.whole_move_number = whole_move_number
         self.deviation_san = deviation_san
         self.reference_san = reference_san
         self.player_color = player_color
+        self.board = chess.Board() if board is None else board
 
     def __repr__(self):
         return (
             f"DeviationResult(whole_move_number={self.whole_move_number}, "
             f"deviation_san='{self.deviation_san}', "
             f"reference_san='{self.reference_san}', "
-            f"player_color='{self.player_color}')"
+            f"player_color='{self.player_color}', "
+            f"board_fen='{self.board.fen()}')"
         )
 
     def __eq__(self, other):
@@ -45,4 +51,5 @@ class DeviationResult:
             and self.deviation_san == other.deviation_san
             and self.reference_san == other.reference_san
             and self.player_color == other.player_color
+            # Note: We're intentionally not comparing the 'board' attribute here.
         )

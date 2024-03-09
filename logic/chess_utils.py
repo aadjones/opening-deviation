@@ -43,7 +43,11 @@ def compare_moves(
     deviation_san = recent_board.san(recent_move)
     reference_san = repertoire_board.san(rep_move)
     return DeviationResult(
-        whole_move_number, deviation_san, reference_san, player_color
+        whole_move_number,
+        deviation_san,
+        reference_san,
+        player_color,
+        recent_board,
     )
 
 

@@ -2,8 +2,13 @@
 This is the driver code that actually displays the website through streamlit.
 """
 
+import chess
+import chess.svg
 import streamlit as st
-from logic.form_handlers import handle_form_submission
+from logic.form_handlers import (
+    handle_form_submission,
+    svg_to_image_with_base64,
+)
 
 ################################################################################
 # Global variables
