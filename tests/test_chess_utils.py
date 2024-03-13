@@ -3,8 +3,9 @@ from logic.chess_utils import (
     find_deviation,
     read_pgn,
     get_player_color,
-    find_deviation_in_entire_study,
-)
+    find_deviation_in_entire_study)
+
+from logic import lichess_api
 from logic.deviation_result import DeviationResult
 
 PGN_PATH = "pgns/"
@@ -100,6 +101,8 @@ def test_find_deviation_in_entire_study(
     PGN_PATH = "pgns/"
     my_game = read_pgn(PGN_PATH + my_pgn_path)
     assert (
-        find_deviation_in_entire_study(ref_study_url, my_game, player)
+        find_deviation_in_entire_study(
+            lichess_api.Study.fetch_url(ref_study_url),
+            my_game, player)
         == expected
     )

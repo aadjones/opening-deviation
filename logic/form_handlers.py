@@ -6,15 +6,19 @@ from typing import Optional, List
 import base64
 import chess
 import chess.svg
+import logging
 from chess.svg import Arrow
 import streamlit as st
+from streamlit import logger
+from . import lichess_api
+from . import pgn_utils
 from .lichess_api import get_last_games_pgn
 from .chess_utils import (
-    pgn_to_pgn_list,
     find_deviation_in_entire_study_white_and_black,
 )
 from .deviation_result import DeviationResult
 
+LOG = logger.get_logger(__name__)
 
 def handle_form_submission(
     username: str, study_url_white: str, study_url_black: str, max_games: int
@@ -29,17 +33,22 @@ def handle_form_submission(
     :return: None
     """
 
-    # Fetch the last game played by the user
-    test_game_str = get_last_games_pgn(username, max_games)
-    test_game_list = pgn_to_pgn_list(test_game_str)
+    white_study = lichess_api.Study.fetch_url(study_url_white)
+    black_study = lichess_api.Study.fetch_url(study_url_black)
 
+    # Fetch the last game played by the user
+    LOG.info("Fetching %s games for %s", max_games, username)
+    test_game_str = get_last_games_pgn(username, max_games)
+    LOG.info("Converting to PGN list...")
+    test_game_list = pgn_utils.pgn_to_pgn_list(test_game_str)
+    LOG.info("Finding deviations...")
     # Find deviation between games
     for game in test_game_list:
         deviation_info = find_deviation_in_entire_study_white_and_black(
-            study_url_white, study_url_black, game, username
+            white_study, black_study, game, username
         )
         display_deviation_info(deviation_info)
-
+    LOG.info("Done")
 
 def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
     """
@@ -199,13 +208,16 @@ def handle_form_submission_grid(
 
     # Fetch the last game played by the user
     test_game_str = get_last_games_pgn(username, max_games)
-    test_game_list = pgn_to_pgn_list(test_game_str)
+    test_game_list = pgn_utils.pgn_to_pgn_list(test_game_str)
+
+    white_study = lichess_api.Study.fetch_url(study_url_white)
+    black_study = lichess_api.Study.fetch_url(study_url_black)
 
     # Find deviation between games
     info_list = []
     for game in test_game_list:
         deviation_info = find_deviation_in_entire_study_white_and_black(
-            study_url_white, study_url_black, game, username
+            white_study, black_study, game, username
         )
         info_list.append(deviation_info)
     grid = get_image_grid_from_deviation_list(info_list)

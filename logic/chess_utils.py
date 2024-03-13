@@ -8,8 +8,10 @@ from typing import Optional, List
 import requests
 import chess.pgn
 from .deviation_result import DeviationResult
-from .lichess_api import extract_study_id_from_url
+from .lichess_api import Study
 
+from streamlit.logger import get_logger
+logger = get_logger(__name__)
 
 def compare_moves(
     recent_board: chess.Board,
@@ -99,28 +101,18 @@ def find_deviation(
 
 
 def find_deviation_in_entire_study(
-    url: str, recent_game: chess.pgn.Game, username: str
+    study: Study, recent_game: chess.pgn.Game, username: str
 ) -> Optional[DeviationResult]:
     """
     Compares the moves of a recent game against a study of repertoire games, one per chapter,
     and finds the first move that deviates.
 
-    :param url: str, the URL to the Lichess study
+    :param study: Study, the study to find a deviation against
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
     :param username: str, the name or identifier of the player
     :return: DeviationResult, or None if there's no deviation
     """
-    study_id = extract_study_id_from_url(url)
-    url: str = f"https://lichess.org/api/study/{study_id}.pgn"
-    response: requests.Response = requests.get(url)
-    if response.status_code != 200:
-        print(f"Failed to fetch study. Status code: {response.status_code}")
-        return None
-
-    # Extract the PGN data for the entire study
-    full_pgn_data = response.text
-    chapters = pgn_to_pgn_list(full_pgn_data)
-    for ref_game in chapters:
+    for ref_game in study.chapters:
         deviation = find_deviation(ref_game, recent_game, username)
         if deviation:
             return deviation
@@ -128,8 +120,8 @@ def find_deviation_in_entire_study(
 
 
 def find_deviation_in_entire_study_white_and_black(
-    white_study: str,
-    black_study: str,
+    white_study: Study,
+    black_study: Study,
     recent_game: chess.pgn.Game,
     username: str,
 ) -> Optional[DeviationResult]:
@@ -137,44 +129,21 @@ def find_deviation_in_entire_study_white_and_black(
     Compares the moves of a recent game against a study of repertoire games, one per chapter,
     and finds the first move that deviates.
 
-    :param white_study: str, the URL to the White Lichess study
-    :param black_study: str, the URL to the Black Lichess study
+    :param white_study: the white repertoire Study
+    :param black_study: the black repertoire Study
     :param recent_game: chess.pgn.Game, the recent game to compare against the repertoire
     :param username: str, the name or identifier of the player
     :return: DeviationResult, or None if there's no deviation
     """
-    white_study_id = extract_study_id_from_url(white_study)
-    black_study_id = extract_study_id_from_url(black_study)
-    white_url: str = f"https://lichess.org/api/study/{white_study_id}.pgn"
-    black_url: str = f"https://lichess.org/api/study/{black_study_id}.pgn"
-    white_response: requests.Response = requests.get(white_url)
-    if white_response.status_code != 200:
-        print(
-            f"Failed to fetch study. Status code: {white_response.status_code}"
-        )
-        return None
+    player_color = get_player_color(recent_game, username)
+    if player_color == "White":
+        study = white_study
+    elif player_color == "Black":
+        study = black_study
+    else:
+        raise Exception(f"Could not find player {username} in provided game")
 
-    black_response: requests.Response = requests.get(black_url)
-    if black_response.status_code != 200:
-        print(
-            f"Failed to fetch study. Status code: {black_response.status_code}"
-        )
-        return None
-
-    # Extract the PGN data for the white and black studies
-    white_pgn_data = white_response.text
-    white_chapters = pgn_to_pgn_list(white_pgn_data)
-    black_pgn_data = black_response.text
-    black_chapters = pgn_to_pgn_list(black_pgn_data)
-    chapters = []
-
-    if get_player_color(recent_game, username) == "White":
-        chapters = white_chapters
-
-    if get_player_color(recent_game, username) == "Black":
-        chapters = black_chapters
-
-    for ref_game in chapters:
+    for ref_game in study.chapters:
         deviation = find_deviation(ref_game, recent_game, username)
         if deviation:
             return deviation
@@ -203,16 +172,6 @@ def get_player_color(
     return None
 
 
-def pgn_string_to_game(pgn_str: str) -> chess.pgn.Game:
-    """
-    Converts a PGN format string into a chess.pgn.Game object.
-
-    :param pgn_str: str, the PGN format string of the game
-    :return: chess.pgn.Game, the game object
-    """
-    pgn_io = io.StringIO(pgn_str)
-    game = chess.pgn.read_game(pgn_io)
-    return game
 
 
 def write_pgn(pgn_data: str, filename: str) -> None:
@@ -242,14 +201,3 @@ def read_pgn(pgn_file_path: str) -> chess.pgn.Game:
     """
     with open(pgn_file_path, "r", encoding="utf-8") as pgn_file:
         return chess.pgn.read_game(pgn_file)
-
-
-def pgn_to_pgn_list(pgn_data: str) -> List[chess.pgn.Game]:
-    """
-    Splits a pgn with multiple games into a list of pgns with one game each
-
-    :param pgn_data: str, a PGN string, possibly containing many games, separated by 3 new lines each
-    :return: List[chess.pgn.Game], a list of chess game objects read in from the PGN string
-    """
-    pgn_list_str = pgn_data.strip().split("\n\n\n")
-    return [pgn_string_to_game(game) for game in pgn_list_str]
