@@ -4,10 +4,35 @@ and get study data from a Lichess study.
 """
 
 from typing import Optional
+import chess.pgn
+import dataclasses
 import re
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+from . import pgn_utils
+from streamlit.logger import get_logger
+LOG = get_logger(__name__)
+
+@dataclasses.dataclass
+class Study:
+    chapters: list[chess.pgn.Game]
+
+    @staticmethod
+    def fetch_id(study_id: str) -> "Study":
+        url = f"https://lichess.org/api/study/{study_id}.pgn"
+        response: requests.Response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception("Failed to fetch study. Status code: {response.status_code}")
+        return Study(chapters=pgn_utils.pgn_to_pgn_list(response.text))
+
+    @staticmethod
+    def fetch_url(url: str) -> "Study":
+        LOG.info(f"Fetching study from {url}...")
+        study = Study.fetch_id(_extract_study_id_from_url(url))
+        LOG.info(f"done")
+        return study
+
 
 
 def get_last_games_pgn(
@@ -37,6 +62,7 @@ def get_last_games_pgn(
     )
     adapter = HTTPAdapter(max_retries=retry)
     session.mount("https://", adapter)
+    LOG.info("Fetching %s games for %s", max_games, username)
 
     try:
         response = session.get(
@@ -46,6 +72,7 @@ def get_last_games_pgn(
         )
         # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
         response.raise_for_status()
+        LOG.info("Fetch done")
         return response.text
     except requests.exceptions.RequestException as e:
         print(f"An error occurred: {e}")
@@ -60,8 +87,10 @@ def get_pgn_from_study(study_url: str, chapter_number: int) -> str:
     :param chapter_number: int, the chapter number from which to extract the PGN
     :return: str, the PGN data
     """
+    # TODO: Replace this with the Study class and common code?
+
     # Construct the URL for fetching study details
-    study_id = extract_study_id_from_url(study_url)
+    study_id = _extract_study_id_from_url(study_url)
     url = f"https://lichess.org/api/study/{study_id}.pgn"
 
     # Unclear if we need all these parameters inside params below; could just be a ChatGPT thing
@@ -86,7 +115,7 @@ def get_pgn_from_study(study_url: str, chapter_number: int) -> str:
     return chapter_pgn
 
 
-def extract_study_id_from_url(url: str) -> str:
+def _extract_study_id_from_url(url: str) -> str:
     """
     Extracts the study ID from a Lichess study URL.
 
@@ -138,7 +167,7 @@ def get_study_chapters_count(study_id: str) -> int:
     url: str = f"https://lichess.org/api/study/{study_id}.pgn"
     response: requests.Response = requests.get(url)
     if response.status_code != 200:
-        return f"Failed to fetch study. Status code: {response.status_code}"
+        raise Exception(f"Failed to fetch study. Status code: {response.status_code}")
 
     # Extract the PGN data for the entire study
     full_pgn_data = response.text

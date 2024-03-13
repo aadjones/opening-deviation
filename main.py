@@ -17,7 +17,6 @@ from logic.form_handlers import handle_form_submission_grid
 # End of global variables
 ################################################################################
 
-
 # Title of the web app
 st.title("Chess Opening Repertoire Practice")
 
