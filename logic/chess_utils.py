@@ -157,8 +157,7 @@ def get_player_color(
 
     :param recent_game: chess.pgn.Game, the game to check
     :param player_name: str, the name or identifier of the player
-    :return: 'White' if the player was playing as White, 'Black' if the player was playing as Black,
-    or None if the player name does not match either player
+    :return: 'White' if the player was White, 'Black' if the player was Black, or None if no match
     """
     white_player = recent_game.headers["White"]
     black_player = recent_game.headers["Black"]
