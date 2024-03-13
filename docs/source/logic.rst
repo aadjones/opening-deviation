@@ -36,6 +36,14 @@ logic.lichess\_api module
    :undoc-members:
    :show-inheritance:
 
+logic.pgn\_utils module
+-----------------------
+
+.. automodule:: logic.pgn_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

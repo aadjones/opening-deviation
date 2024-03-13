@@ -1,3 +1,7 @@
+"""
+This module provides utility functions for pgn files.
+"""
+
 import chess.pgn
 import io
 

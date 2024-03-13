@@ -19,8 +19,8 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))
 
 project = "Opening Deviation"
-copyright = "2024, Aaron Demby Jones, Jason Rothschild"
-author = "Aaron Demby Jones, Jason Rothschild"
+copyright = "2024, Aaron Demby Jones, Jason Rothschild, Todd Lipcon"
+author = "Aaron Demby Jones, Jason Rothschild, Todd Lipcon"
 release = "00.00.01"
 
 # -- General configuration ---------------------------------------------------
