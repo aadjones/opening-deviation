@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="Opening Deviation",  # Replace with your own project name
     version="0.1.0",  # The initial project version
-    author="Aaron Demby Jones and Jason Rothschild",
+    author="Aaron Demby Jones, Jason Rothschild, Todd Lipcon",
     author_email="aaron.demby.jones@gmail.com",  # Replace with your email
     description="Find when you first left your chess opening preparation.",  # Provide a short description
     long_description=open(

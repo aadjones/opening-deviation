@@ -6,7 +6,6 @@ from typing import Optional, List
 import base64
 import chess
 import chess.svg
-import logging
 from chess.svg import Arrow
 import streamlit as st
 from streamlit import logger
@@ -19,6 +18,7 @@ from .chess_utils import (
 from .deviation_result import DeviationResult
 
 LOG = logger.get_logger(__name__)
+
 
 def handle_form_submission(
     username: str, study_url_white: str, study_url_black: str, max_games: int
@@ -49,6 +49,7 @@ def handle_form_submission(
         )
         display_deviation_info(deviation_info)
     LOG.info("Done")
+
 
 def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
     """

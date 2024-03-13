@@ -2,16 +2,15 @@
 This module provides utility functions for chess analysis.
 """
 
-import io
 import os
-from typing import Optional, List
-import requests
+from typing import Optional
 import chess.pgn
 from .deviation_result import DeviationResult
 from .lichess_api import Study
 
 from streamlit.logger import get_logger
 logger = get_logger(__name__)
+
 
 def compare_moves(
     recent_board: chess.Board,
@@ -170,8 +169,6 @@ def get_player_color(
         return "Black"
     # Else:
     return None
-
-
 
 
 def write_pgn(pgn_data: str, filename: str) -> None:

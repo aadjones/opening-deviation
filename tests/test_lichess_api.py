@@ -13,7 +13,6 @@ from logic.lichess_api import (
         ("https://lichess.org/study/RKEBYTWL", "RKEBYTWL"),
     ],
 )
-
 def test_extract_study_id_from_url_using_chapter(input_url, expected_output):
     assert _extract_study_id_from_url(input_url) == expected_output
 

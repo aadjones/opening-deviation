@@ -1,6 +1,7 @@
 import chess.pgn
 import io
 
+
 def pgn_string_to_game(pgn_str: str) -> chess.pgn.Game:
     """
     Converts a PGN format string into a chess.pgn.Game object.
@@ -13,6 +14,7 @@ def pgn_string_to_game(pgn_str: str) -> chess.pgn.Game:
     if game is None:
         raise Exception(f"Could not read game from PGN: {pgn_str}")
     return game
+
 
 def pgn_to_pgn_list(pgn_data: str) -> list[chess.pgn.Game]:
     """

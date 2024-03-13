@@ -14,6 +14,7 @@ from . import pgn_utils
 from streamlit.logger import get_logger
 LOG = get_logger(__name__)
 
+
 @dataclasses.dataclass
 class Study:
     chapters: list[chess.pgn.Game]
@@ -30,9 +31,8 @@ class Study:
     def fetch_url(url: str) -> "Study":
         LOG.info(f"Fetching study from {url}...")
         study = Study.fetch_id(_extract_study_id_from_url(url))
-        LOG.info(f"done")
+        LOG.info("done")
         return study
-
 
 
 def get_last_games_pgn(
@@ -150,7 +150,7 @@ def extract_chapter_pgn(full_pgn: str, chapter_number: int) -> str:
     chapter_pgn = chapters[chapter_number - 1].strip()
 
     # Check if the chapter PGN starts with a PGN tag; if not, it might not be a valid PGN
-    # This part of the code might be too brittle; do all PGN files start with '[Event'?
+    # This part of the code might be too brittle; do all PGN files start with '[Event]'?
     if not chapter_pgn.startswith("[Event"):
         return f"Chapter {chapter_number} PGN not found or not valid."
 
