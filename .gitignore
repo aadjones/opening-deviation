@@ -13,3 +13,6 @@ docs/build/
 # If you use a virtual environment for Sphinx
 venv/
 .myenv/
+
+# emacs backup files
+*~
