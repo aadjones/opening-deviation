@@ -3,7 +3,6 @@ This module provides the logic for the user input/output on the website through 
 """
 
 from typing import Optional, List
-import base64
 import chess
 import chess.svg
 from chess.svg import Arrow
@@ -18,37 +17,6 @@ from .chess_utils import (
 from .deviation_result import DeviationResult
 
 LOG = logger.get_logger(__name__)
-
-
-def handle_form_submission(
-    username: str, study_url_white: str, study_url_black: str, max_games: int
-) -> None:
-    """
-    Handles form submission and displays the result.
-
-    :param username: str, the Lichess username
-    :param study_url_white: str, the URL of the White Lichess study
-    :param study_url_black: str, the URL of the Black Lichess study
-    :param max_games: int, the number of games to look at the user's history
-    :return: None
-    """
-
-    white_study = lichess_api.Study.fetch_url(study_url_white)
-    black_study = lichess_api.Study.fetch_url(study_url_black)
-
-    # Fetch the last game played by the user
-    LOG.info("Fetching %s games for %s", max_games, username)
-    test_game_str = get_last_games_pgn(username, max_games)
-    LOG.info("Converting to PGN list...")
-    test_game_list = pgn_utils.pgn_to_pgn_list(test_game_str)
-    LOG.info("Finding deviations...")
-    # Find deviation between games
-    for game in test_game_list:
-        deviation_info = find_deviation_in_entire_study_white_and_black(
-            white_study, black_study, game, username
-        )
-        display_deviation_info(deviation_info)
-    LOG.info("Done")
 
 
 def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
@@ -75,19 +43,6 @@ def display_deviation_info(deviation_info: Optional[DeviationResult]) -> None:
         st.write(f"Reference move: {ref_move_notation}")
     else:
         st.write("No deviation found in this game.")
-
-
-def svg_to_image_with_base64(svg: str) -> str:
-    """
-    Converts SVG string to format compatible with st.image using base64 encoding.
-
-    :param svg: str, a string with svg data
-    :return: str, the converted output format that is compatible with st.image
-    """
-    # Encode SVG string to base64
-    svg_base64 = base64.b64encode(svg.encode("utf-8")).decode("utf-8")
-    # Create a base64 data URL
-    return f"data:image/svg+xml;base64,{svg_base64}"
 
 
 def san_to_arrow(

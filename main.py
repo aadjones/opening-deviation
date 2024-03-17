@@ -5,18 +5,6 @@ This is the driver code that actually displays the website through streamlit.
 import streamlit as st
 from logic.form_handlers import handle_form_submission_grid
 
-################################################################################
-# Global variables
-################################################################################
-
-# PGN_PATH = 'pgns/' # useful for debugging to read/write pgn files
-
-# api_token = st.secrets["LICHESS_API_TOKEN"] # api token may be necessary later
-
-################################################################################
-# End of global variables
-################################################################################
-
 # Title of the web app
 st.title("Chess Opening Repertoire Practice")
 
@@ -54,9 +42,6 @@ with st.form(key="opening_form"):
 
 # Handling form submission
 if submit_button:
-    # handle_form_submission(
-    #     username, study_url_white, study_url_black, int(max_games)
-    # )
     handle_form_submission_grid(
         username, study_url_white, study_url_black, int(max_games)
     )
