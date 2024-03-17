@@ -151,7 +151,7 @@ def find_deviation_in_entire_study_white_and_black(
 
 def get_player_color(
     recent_game: chess.pgn.Game, player_name: str
-) -> Optional[str]:
+) -> str:
     """
     Determines the color the player was playing as in a given game.
 
@@ -167,7 +167,7 @@ def get_player_color(
     if player_name == black_player:
         return "Black"
     # Else:
-    return None
+    raise Exception(f"Could not find match {player_name} to the game!")
 
 
 def write_pgn(pgn_data: str, filename: str) -> None:

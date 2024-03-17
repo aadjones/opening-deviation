@@ -164,17 +164,18 @@ def handle_form_submission_grid(
 
     # Fetch the last game played by the user
     test_game_str = get_last_games_pgn(username, max_games)
-    test_game_list = pgn_utils.pgn_to_pgn_list(test_game_str)
-
-    white_study = lichess_api.Study.fetch_url(study_url_white)
-    black_study = lichess_api.Study.fetch_url(study_url_black)
-
-    # Find deviation between games
-    info_list = []
-    for game in test_game_list:
-        deviation_info = find_deviation_in_entire_study_white_and_black(
-            white_study, black_study, game, username
-        )
-        info_list.append(deviation_info)
-    grid = get_image_grid_from_deviation_list(info_list)
-    display_image_grid(grid)
+    if test_game_str is None:
+        print("Error fetching games!")
+    else:
+        test_game_list = pgn_utils.pgn_to_pgn_list(test_game_str)
+        white_study = lichess_api.Study.fetch_url(study_url_white)
+        black_study = lichess_api.Study.fetch_url(study_url_black)
+        # Find deviation between games
+        info_list = []
+        for game in test_game_list:
+            deviation_info = find_deviation_in_entire_study_white_and_black(
+                white_study, black_study, game, username
+            )
+            info_list.append(deviation_info)
+        grid = get_image_grid_from_deviation_list(info_list)
+        display_image_grid(grid)
