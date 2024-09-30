@@ -1,3 +1,9 @@
+## Opening Deviation
+
+<img width="400" alt="deviation" src="https://github.com/user-attachments/assets/7854e7bd-a381-4ffc-87b2-96b599f5cbde">
+
+The played move, Nb1-c3, is displayed in red. The reference move, b5xa6, is shown in blue.
+
 # How to Run
 
 Follow these steps to set up and run the project.
